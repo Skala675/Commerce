@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container-category">
+        <div>
+            <h4 class="category-title">Categories</h4>
+            <div class="category-section">
+                {% for category in categories %}
+                    <a class="category-link" href="{% url 'category' cat=category.1 %}"><p class="category">{{ category.1 }}</p></a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="container-category-products">
+            {% for auction in auctions %}
+                <div>
+                    <a href="{% url 'product' id=auction.id %}">
+                        <div class="category-product-image">
+                            {% if auction.image %}
+                                <img src="{{ auction.image }}" alt="Image" title="{{ auction.description }}">
+                            {% else %}
+                                <div>{{ auction.description }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="product-title">
+                            {{ auction.title }}
+                        </div>
+                        <div class="product-bid">
+                            {% if auction.bids.all %}
+                                Current bid: ${{ auction.bids.last.bid }}
+                            {% else %}
+                                Initial bid: ${{ auction.bid }}
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <div class="category-not-found">
+                    <h3>No products available yet :c</h3>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

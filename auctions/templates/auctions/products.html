@@ -1,0 +1,109 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    {% if product %}
+        <div class="container-product-page">
+            <div class="container-product-main">
+                <div class="product-page-image">
+                    <img src="{{ product.image }}" alt="Image">
+                </div>
+                <div>
+                    <h2>{{ product.title }}</h2>
+                    <p>
+                        Seller: {{ product.user.username }}
+                    </p>
+                    {% if product.is_closed %}
+                        <p>This auction is closed.</p>
+                        {% if user.is_authenticated %}
+                            {% if user == product.winner %}
+                                <p>Congratulations!, you have won this auction with a bid of ${{product.winner.bids.last.bid}}.</p>
+                            {% else %}
+                                <p>The highest bidder is: {{ product.winner.username }}</p>
+                                <p>The winning bid is: ${{ product.winner.bids.last.bid }}</p>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        {% if product.bids.all %}
+                            <p>
+                                {% if product.bids.last.user == user %}
+                                    Your bid is the current bid: ${{ product.bids.last.bid }}
+                                {% else %}
+                                    Current bid: ${{ product.bids.last.bid }}
+                                {% endif %}
+                            </p>
+                        {% else %}
+                            <p>Initial bid: ${{ product.bid }}</p>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                            {% if user == product.user %}
+                                <form action="{% url 'closeAuction' id=product.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="product-button" onclick="return confirm('Are you sure you want to close this auction?')">
+                                        Close auction
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'offer' id=product.id %}">
+                                    {% csrf_token %}
+                                    {{ formOffer }}
+                                    <input type="submit" value="Offer" class="product-button">
+                                </form>
+                            {% endif %}
+                            <form action="{% url 'watchlist' id=product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="product-button">
+                                    {% if user in product.watchlist.all %}
+                                        Remove from Watchlist
+                                    {% else %}
+                                        Add to Watchlist
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="product-button">Offer</a>
+                            <a href="{% url 'login' %}" class="product-button">Add to Watchlist</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="container-product-information">
+                <div>
+                    <h3>Description</h3>
+                    <br>
+                    <p>{{ product.description }}</p>
+                    <div>
+                        <strong>Category:</strong> {{ product.get_category_display }}
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        {% if user.is_authenticated %}
+                            <h3>Ask the seller!</h3>
+                            <br>
+                            <form action="{% url 'comment' id=product.id %}">
+                                {% csrf_token %}
+                                <div>{{ formComment }}</div>
+                                <div>
+                                    <input type="submit" value="Comment" class="product-button">
+                                </div>
+                            </form>
+                        {% else %}
+                            <h3>Comments</h3>
+                        {% endif %}
+                    </div>
+                    <div class="comment">
+                        {% for comment in comments %}
+                            <p>{{ comment.comment }}<p>
+                        {% empty %}
+                            <p>Nobody has commented yet. Ask the first one!</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div>
+            It seems that the product you are looking for doesn't exist :c
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="form">
+        <div class="card-publish-header">
+            <p>Publish your product and start earning money!</p>
+        </div>
+        <div class="card-publish">
+            {% if message %}
+                <div>{{ message }}</div>
+            {% endif %}
+            <form action="{% url 'publish' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Submit" class="btn btn-primary input">
+            </form>
+            {{ message }}
+        </div>
+    </div>
+{% endblock %}

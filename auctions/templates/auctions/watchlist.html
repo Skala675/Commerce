@@ -1,0 +1,52 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    <div class="container-watchlist">
+        <h3>Your watchlist</h3>
+        <div>
+            {% for auction in watchlist %}
+                <div>
+                    <a href="{% url 'product' id=auction.id %}" class="watchlist-product">
+                        <div class="category-product-image">
+                            {% if auction.image %}
+                                <img src="{{ auction.image }}" alt="Image" title="{{ auction.description }}">
+                            {% else %}
+                                <div>{{ auction.description }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="container-information-watchlist">
+                            <h4>{{ auction.title }}</h4>
+                            {% if auction.bids.all %}
+                                <p>Current Bid: {{ auction.bids.last.bid }}</p>
+                            {% else %}
+                                <p>Initial Bid: {{ auction.bid }}</p>
+                            {% endif %}
+                            {% if user == auction.user %}
+                                <p>This is your auction.</p>
+                            {% else %}
+                                <p>Seller: {{ auction.user }}</p>
+                            {% endif %}
+                            {% if auction.is_closed %}
+                                <p><strong>
+                                    {% if auction.winner == user %}
+                                        Congratulations!, you have won this auction!
+                                    {% else %}
+                                        This auction is already close.
+                                    {% endif %}
+                                </strong></p>
+                            {% endif %}
+                            <form action="{% url 'watchlist' id=auction.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="watchlist-button">
+                                        Remove from Watchlist
+                                </button>
+                            </form>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <div>It looks that you don't have any item in your watchlist. Start adding items!</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

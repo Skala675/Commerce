@@ -1,0 +1,50 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container-index">
+        <header class="container-header">
+            <div class="header">
+                <h2>WELCOME TO AUCTIONS!</h2>
+                <section>
+                    <p>The best place to look for the best products at the best prices.</p>
+                    <p>Our entire catalog below.</p>
+                </section>
+            </div>
+            <div class="img-header"><img src="https://weareroast.com/wp-content/uploads/2017/08/shutterstock_691698019.jpg" alt="Image"></div>
+        </header>
+        <div class="container-categories">
+            {% for category, products in category_products.items %}
+                <div>
+                    <h3 class="category-title">{{ category }}  <a href="{% url 'category' cat=category %}" class="see-all">See all <span class="arrow">&#8594;</span></a></h3>
+                    <div class="container-products">
+                        {% for product in products %}
+                            <div>
+                                <a href="{% url 'product' id=product.id %}">
+                                    <div class="product-image">
+                                        {% if product.image %}
+                                            <img src="{{ product.image }}" alt="Image" title="{{ product.description }}">
+                                        {% else %}
+                                            <div>{{ product.description }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-title">
+                                        {{ product.title }}
+                                    </div>
+                                    <div class="product-bid">
+                                        {% if product.bids.all %}
+                                            Current bid: ${{ product.bids.last.bid }}
+                                        {% else %}
+                                            Initial bid: ${{ product.bid }}
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </div>
+                        {% empty %}
+                            <div class="no-product"><img src="static/images/noProducts.png" alt="No products available yet :c"></img></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div> 
+{% endblock %}
