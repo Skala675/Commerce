@@ -23,6 +23,6 @@ This project is part of the CS50 Web Programming Development course by Harvard. 
 
 1. Clone this repository.
    ```bash
-   git clone https://github.com/[your-user]/commerce.git
-   cd commerce
+   git clone https://github.com/Skala675/Commerce.git
+   cd Commerce
 
